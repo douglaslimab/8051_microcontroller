@@ -1,0 +1,203 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	PRAT004.ASM
+	Object File:	PRAT004.hex
+	List File:	PRAT004.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:		N      0000			ORG		000h
+    2:	  0000	01 1D				AJMP		INICIO
+    3:		N      0003			ORG		003h
+    4:	  0003	01 49				AJMP		EXT_0
+    5:		N      000B			ORG		00Bh
+    6:	  000B	01 50				AJMP		TIM_0
+    7:		N      0013			ORG		013h
+    8:	  0013	01 4D				AJMP		EXT_1
+    9:		N      001B			ORG		01Bh
+   10:	  001B	01 58				AJMP		TIM_1
+   11:				;----------------------------------------------------
+   12:	  001D	75 81 3F	INICIO:		MOV		SP,#03Fh
+   13:
+   14:	  0020	75 A8 8F			MOV		IE,#08Fh
+   15:	  0023	75 B8 0A			MOV		IP,#00Ah
+   16:
+   17:	  0026	75 89 11			MOV		TMOD,#011h
+   18:
+   19:	  0029	75 8C 3C			MOV		TH0,#03Ch
+   20:	  002C	75 8A B0			MOV		TL0,#0B0h
+   21:
+   22:	  002F	75 8D 00			MOV		TH1,#0
+   23:	  0032	75 8B 00			MOV		TL1,#0
+   24:
+   25:	  0035	C2 8C				CLR		TR0
+   26:	  0037	C2 8E				CLR		TR1
+   27:
+   28:	  0039	D2 88				SETB		IT0
+   29:	  003B	D2 8A				SETB		IT1
+   30:
+   31:	  003D	90 00 62	FORA:		MOV		DPTR,#PASSO
+   32:				;----------------------------------------------------
+   33:	  0040	74 01		MAIN:		MOV		A,#01
+   34:	  0042	93				MOVC		A,@A+DPTR
+   35:	  0043	60 F8				JZ		FORA
+   36:	  0045	F5 A0				MOV		P2,A
+   37:	  0047	01 40				AJMP		MAIN
+   38:				;----------------------------------------------------
+   39:	  0049	A3		EXT_0:		INC		DPTR
+   40:	  004A	11 59				ACALL		DELAY
+   41:	  004C	32				RETI
+   42:				;----------------------------------------------------
+   43:	  004D	B2 8C		EXT_1:		CPL		TR0
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44:	  004F	32				RETI
+   45:				;----------------------------------------------------
+   46:	  0050	A3		TIM_0:		INC		DPTR
+   47:	  0051	75 8C 3C			MOV		TH0,#03Ch
+   48:	  0054	75 8A B0			MOV		TL0,#0B0h
+   49:	  0057	32				RETI
+   50:				;----------------------------------------------------
+   51:	  0058			TIM_1:
+   52:	  0058	32				RETI
+   53:				;----------------------------------------------------
+   54:	  0059	78 FF		DELAY:		MOV		R0,#0FFh
+   55:	  005B	79 0A		VOLTA:		MOV		R1,#00Ah
+   56:	  005D	D9 FE				DJNZ		R1,$
+   57:	  005F	D8 FA				DJNZ		R0,VOLTA
+   58:	  0061	22				RET
+   59:				;----------------------------------------------------
+   60:	  0062	00 01 03 02	PASSO:	DB	0, 001h, 003h, 002h, 006h, 004h, 00Ch, 008h, 009h, 0
+	  0066	06 04 0C 08
+	  006A	09 00
+   61:				;----------------------------------------------------
+   62:						END
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6
+ACC				  DATA	      E0
+B				  DATA	      F0
+CY				  BIT	      D7
+DELAY				  CODE	    0059	  54
+DPH				  DATA	      83
+DPL				  DATA	      82
+EA				  BIT	      AF
+ES				  BIT	      AC
+ET0				  BIT	      A9
+ET1				  BIT	      AB
+EX0				  BIT	      A8
+EX1				  BIT	      AA
+EXTI0				  CODE	    0003
+EXTI1				  CODE	    0013
+EXT_0				  CODE	    0049	  39
+EXT_1				  CODE	    004D	  43
+F0				  BIT	      D5
+FORA				  CODE	    003D	  31
+IE				  DATA	      A8
+IE0				  BIT	      89
+IE1				  BIT	      8B
+INICIO				  CODE	    001D	  12
+INT0				  BIT	      B2
+INT1				  BIT	      B3
+IP				  DATA	      B8
+IT0				  BIT	      88
+IT1				  BIT	      8A
+MAIN				  CODE	    0040	  33
+OV				  BIT	      D2
+P				  BIT	      D0
+P0				  DATA	      80
+P1				  DATA	      90
+P2				  DATA	      A0
+P3				  DATA	      B0
+PASSO				  CODE	    0062	  60
+PCON				  DATA	      87
+PS				  BIT	      BC
+PSW				  DATA	      D0
+PT0				  BIT	      B9
+PT1				  BIT	      BB
+PX0				  BIT	      B8
+PX1				  BIT	      BA
+RB8				  BIT	      9A
+RD				  BIT	      B7
+REN				  BIT	      9C
+RESET				  CODE	    0000
+RI				  BIT	      98
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+RS0				  BIT	      D3
+RS1				  BIT	      D4
+RXD				  BIT	      B0
+SBUF				  DATA	      99
+SCON				  DATA	      98
+SINT				  CODE	    0023
+SM0				  BIT	      9F
+SM1				  BIT	      9E
+SM2				  BIT	      9D
+SP				  DATA	      81
+T0				  BIT	      B4
+T1				  BIT	      B5
+TB8				  BIT	      9B
+TCON				  DATA	      88
+TF0				  BIT	      8D
+TF1				  BIT	      8F
+TH0				  DATA	      8C
+TH1				  DATA	      8D
+TI				  BIT	      99
+TIMER0				  CODE	    000B
+TIMER1				  CODE	    001B
+TIM_0				  CODE	    0050	  46
+TIM_1				  CODE	    0058	  51
+TL0				  DATA	      8A
+TL1				  DATA	      8B
+TMOD				  DATA	      89
+TR0				  BIT	      8C
+TR1				  BIT	      8E
+TXD				  BIT	      B1
+VOLTA				  CODE	    005B	  55
+WR				  BIT	      B6

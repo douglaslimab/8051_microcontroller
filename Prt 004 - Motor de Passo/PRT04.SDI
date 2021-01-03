@@ -1,0 +1,23 @@
+,,,;---------------------------------------------------
+0000,75 81 3F,INICIO,INICIO:         MOV             SP,#03Fh
+0003,7A 00,,                MOV             R2,#0
+0005,90 00 21,,                MOV             DPTR,#TABELA
+0008,EA,MAIN,MAIN:           MOV             A,R2
+0009,93,,                MOVC            A,@A+DPTR
+000A,0A,,                INC             R2
+000B,B4 00 04,,                CJNE            A,#0,FIM
+000E,7A 00,,                MOV             R2,#0
+0010,01 16,,                AJMP            FORA
+0012,F5 A0,FIM,FIM:            MOV             P2,A
+0014,11 18,,                ACALL           TEMPO
+0016,01 08,FORA,FORA:           AJMP            MAIN
+,,,;---------------------------------------------------
+0018,78 FF,TEMPO,TEMPO:          MOV             R0,#0FFh
+001A,79 FF,VOLTA,VOLTA:          MOV             R1,#0FFh
+001C,D9 FE,,                DJNZ            R1,$
+001E,D8 FA,,                DJNZ            R0,VOLTA
+0020,22,,                RET
+,,,;---------------------------------------------------
+0021,01 02 04 08,TABELA,TABELA: DB      001h, 002h, 004h, 008h, 0
+,,,;---------------------------------------------------
+000E,,,                END

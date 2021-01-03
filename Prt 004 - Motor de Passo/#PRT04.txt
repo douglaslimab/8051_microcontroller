@@ -1,0 +1,25 @@
+SAIDA      EQU     P3
+CH_0       EQU     P0.0
+CH_1       EQU     P0.1
+;----------------------------------------
+INICIO:   MOV     DPTR,#DADOS
+VOLTA:    MOV     A,#00h
+          MOVC    A,@A+DPTR
+          CJNE    A,#0FFh,PROX
+          AJMP    VOLTA
+
+PROX:     INC     DPTR
+          MOV     SAIDA,A
+          ACALL   TEMPO
+          AJMP    VOLTA
+;----------------------------------------
+DADOS:    DB      01, 02, 08, 04, 0FFh
+;----------------------------------------
+
+TEMPO:    MOV     R0,#0FFh
+NOVO:     MOV     R1,#0FFh
+          DJNZ    R1,$
+          DJNZ    R0,NOVO
+          RET
+;----------------------------------------
+          END

@@ -1,0 +1,30 @@
+000D,,,LIN       EQU      P2
+000B,,,CH        EQU      P3.2
+,,,;-----------------------------------------------
+0000,75 A0 FE,INICIO,INICIO:    MOV      LIN,#0FEh
+0003,30 B2 FD,ROT_1,ROT_1:     JNB      CH,$
+0006,E5 A0,,           MOV      A,LIN
+0008,23,,           RL       A
+0009,11 23,,           ACALL    TEMPO
+000B,F5 A0,,           MOV      LIN,A
+000D,A2 B7,,           MOV      C,P3.7
+000F,50 02,,           JNC      ROT_2
+0011,01 03,,           AJMP     ROT_1
+,,,
+0013,30 B2 FD,ROT_2,ROT_2:     JNB      CH,$
+0016,E5 A0,,           MOV      A,LIN
+0018,03,,           RR       A
+0019,11 23,,           ACALL    TEMPO
+001B,F5 A0,,           MOV      LIN,A
+001D,A2 B0,,           MOV      C,P3.0
+001F,50 E2,,           JNC      ROT_1
+0021,01 13,,           AJMP     ROT_2
+,,,
+,,,;-----------------------------------------------
+0023,78 FF,TEMPO,TEMPO:   MOV    R0,#0FFh
+0025,79 FF,VOLTA,VOLTA:   MOV    R1,#0FFh
+0027,D9 FE,,         DJNZ   R1,$
+0029,D8 FA,,         DJNZ   R0,VOLTA
+002B,22,,         RET
+,,,;-----------------------------------------------
+000E,,,        END

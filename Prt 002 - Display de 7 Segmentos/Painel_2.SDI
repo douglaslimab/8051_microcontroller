@@ -1,0 +1,193 @@
+,,,        ORG     00h
+0000,01 25,,        AJMP    INICIO
+,,,        ORG     03h
+0003,01 59,,        AJMP    INT_0
+,,,        ORG     0Bh
+000B,01 67,,        AJMP    TIM_0
+,,,        ORG     13h
+0013,01 73,,        AJMP    INT_1
+,,,        ORG     1Bh
+001B,01 74,,        AJMP    TIM_1
+,,,        ORG     23h
+0023,01 75,,        AJMP    SERIAL
+,,,;********************************************************************************
+000D,,,        SAIDA   EQU     P2
+000D,,,        CNT     EQU     P1
+,,,        FLAG    EQU     00h
+,,,;********************************************************************************
+0025,75 81 2F,INICIO,INICIO: MOV     SP,#02Fh
+0028,75 A8 97,,        MOV     IE,#097h
+002B,75 B8 12,,        MOV     IP,#012h
+002E,75 98 50,,        MOV     SCON,#050h
+0031,75 8D E6,,        MOV     TH1,#0E6h
+0034,75 87 00,,        MOV     PCON,#00h
+0037,75 89 21,,        MOV     TMOD,#21h
+003A,D2 88,,        SETB    IT0
+003C,D2 8A,,        SETB    IT1
+003E,75 8C 3C,,        MOV     TH0,#03Ch
+0041,75 8A B0,,        MOV     TL0,#0B0h
+0044,7B 41,,        MOV     R3,#'A'
+0046,7C 00,,        MOV     R4,#00
+0048,7D 0A,,        MOV     R5,#10
+004A,11 98,,        ACALL   SELEC
+004C,C2 00,,        CLR     FLAG
+,,,;********************************************************************************
+004E,75 A0 FF,MAIN,MAIN:   MOV     SAIDA,#0FFh
+0051,11 7A,,        ACALL   CNTRL
+0053,11 83,,        ACALL   DADO
+0055,11 8F,,        ACALL   DELAY
+0057,01 4E,,        AJMP    MAIN
+,,,;********************************************************************************
+0059,30 00 06,INT_0,INT_0:  JNB     FLAG,PNT1
+005C,C2 00,,        CLR     FLAG
+005E,C2 8C,,        CLR     TR0
+0060,01 66,,        AJMP    FIIIM
+0062,D2 00,PNT1,PNT1:   SETB    FLAG
+0064,D2 8C,,        SETB    TR0
+0066,32,FIIIM,FIIIM:  RETI
+,,,;********************************************************************************
+0067,DD 03,TIM_0,TIM_0:  DJNZ    R5,SAI
+0069,7D 02,,        MOV     R5,#2
+006B,1C,,        DEC     R4
+006C,75 8C 3C,SAI,SAI:    MOV     TH0,#03Ch
+006F,75 8A B0,,        MOV     TL0,#0B0h
+0072,32,,        RETI
+,,,;********************************************************************************
+0073,,INT_1,INT_1:
+0073,32,,        RETI
+,,,;********************************************************************************
+0074,,TIM_1,TIM_1:
+0074,32,,        RETI
+,,,;********************************************************************************
+0075,AB 99,SERIAL,SERIAL: MOV     R3,SBUF
+0077,C2 98,,        CLR     RI
+0079,32,,        RETI
+,,,;********************************************************************************
+007A,8C 90,CNTRL,CNTRL:  MOV     CNT,R4
+007C,0C,,        INC     R4
+007D,BC 08 02,,        CJNE    R4,#08h,NZ
+0080,7C 00,,        MOV     R4,#00
+0082,22,NZ,NZ:     RET
+,,,;********************************************************************************
+0083,74 00,DADO,DADO:   MOV     A,#00h
+0085,93,,        MOVC    A,@A+DPTR
+0086,60 04,,        JZ      FIM
+0088,F5 A0,,        MOV     SAIDA,A
+008A,A3,,        INC     DPTR
+008B,22,,        RET
+008C,11 98,FIM,FIM:    ACALL   SELEC
+008E,22,,        RET
+,,,;********************************************************************************
+008F,78 10,DELAY,DELAY:  MOV     R0,#010h
+0091,79 10,VOLTA,VOLTA:  MOV     R1,#010h
+0093,D9 FE,,        DJNZ    R1,$
+0095,D8 FA,,        DJNZ    R0,VOLTA
+0097,22,,        RET
+,,,;********************************************************************************
+0098,BB 41 04,SELEC,SELEC:  CJNE    R3,#'A',PT_B
+009B,90 01 4E,,        MOV     DPTR,#TAB_A
+009E,22,,        RET
+009F,BB 42 04,PT_B,PT_B:   CJNE    R3,#'B',PT_C
+00A2,90 01 56,,        MOV     DPTR,#TAB_B
+00A5,22,,        RET
+00A6,BB 43 04,PT_C,PT_C:   CJNE    R3,#'C',PT_D
+00A9,90 01 5E,,        MOV     DPTR,#TAB_C
+00AC,22,,        RET
+00AD,BB 44 04,PT_D,PT_D:   CJNE    R3,#'D',PT_E
+00B0,90 01 66,,        MOV     DPTR,#TAB_D
+00B3,22,,        RET
+00B4,BB 45 04,PT_E,PT_E:   CJNE    R3,#'E',PT_F
+00B7,90 01 6E,,        MOV     DPTR,#TAB_E
+00BA,22,,        RET
+00BB,BB 46 04,PT_F,PT_F:   CJNE    R3,#'F',PT_G
+00BE,90 01 76,,        MOV     DPTR,#TAB_F
+00C1,22,,        RET
+00C2,BB 47 04,PT_G,PT_G:   CJNE    R3,#'G',PT_H
+00C5,90 01 7E,,        MOV     DPTR,#TAB_G
+00C8,22,,        RET
+00C9,BB 48 04,PT_H,PT_H:   CJNE    R3,#'H',PT_I
+00CC,90 01 86,,        MOV     DPTR,#TAB_H
+00CF,22,,        RET
+00D0,BB 49 04,PT_I,PT_I:   CJNE    R3,#'I',PT_J
+00D3,90 01 8E,,        MOV     DPTR,#TAB_I
+00D6,22,,        RET
+00D7,BB 4A 04,PT_J,PT_J:   CJNE    R3,#'J',PT_K
+00DA,90 01 96,,        MOV     DPTR,#TAB_J
+00DD,22,,        RET
+00DE,BB 4B 04,PT_K,PT_K:   CJNE    R3,#'K',PT_L
+00E1,90 01 9E,,        MOV     DPTR,#TAB_K
+00E4,22,,        RET
+00E5,BB 4C 04,PT_L,PT_L:   CJNE    R3,#'L',PT_M
+00E8,90 01 A6,,        MOV     DPTR,#TAB_L
+00EB,22,,        RET
+00EC,BB 4D 04,PT_M,PT_M:   CJNE    R3,#'M',PT_N
+00EF,90 01 AE,,        MOV     DPTR,#TAB_M
+00F2,22,,        RET
+00F3,BB 4E 04,PT_N,PT_N:   CJNE    R3,#'N',PT_O
+00F6,90 01 B6,,        MOV     DPTR,#TAB_N
+00F9,22,,        RET
+00FA,BB 4F 04,PT_O,PT_O:   CJNE    R3,#'O',PT_P
+00FD,90 01 BE,,        MOV     DPTR,#TAB_O
+0100,22,,        RET
+0101,BB 50 04,PT_P,PT_P:   CJNE    R3,#'P',PT_Q
+0104,90 01 C6,,        MOV     DPTR,#TAB_P
+0107,22,,        RET
+0108,BB 51 04,PT_Q,PT_Q:   CJNE    R3,#'Q',PT_R
+010B,90 01 CE,,        MOV     DPTR,#TAB_Q
+010E,22,,        RET
+010F,BB 52 04,PT_R,PT_R:   CJNE    R3,#'R',PT_S
+0112,90 01 D6,,        MOV     DPTR,#TAB_R
+0115,22,,        RET
+0116,BB 53 04,PT_S,PT_S:   CJNE    R3,#'S',PT_T
+0119,90 01 DE,,        MOV     DPTR,#TAB_S
+011C,22,,        RET
+011D,BB 54 04,PT_T,PT_T:   CJNE    R3,#'T',PT_U
+0120,90 01 E6,,        MOV     DPTR,#TAB_T
+0123,22,,        RET
+0124,BB 55 04,PT_U,PT_U:   CJNE    R3,#'U',PT_V
+0127,90 01 EE,,        MOV     DPTR,#TAB_U
+012A,22,,        RET
+012B,BB 56 04,PT_V,PT_V:   CJNE    R3,#'V',PT_W
+012E,90 01 F6,,        MOV     DPTR,#TAB_V
+0131,22,,        RET
+0132,BB 57 04,PT_W,PT_W:   CJNE    R3,#'W',PT_X
+0135,90 01 FE,,        MOV     DPTR,#TAB_W
+0138,22,,        RET
+0139,BB 58 04,PT_X,PT_X:   CJNE    R3,#'X',PT_Y
+013C,90 02 06,,        MOV     DPTR,#TAB_X
+013F,22,,        RET
+0140,BB 59 04,PT_Y,PT_Y:   CJNE    R3,#'Y',PT_Z
+0143,90 02 0E,,        MOV     DPTR,#TAB_Y
+0146,22,,        RET
+0147,BB 5A 03,PT_Z,PT_Z:   CJNE    R3,#'Z',FIIM
+014A,90 02 16,,        MOV     DPTR,#TAB_Z
+014D,22,FIIM,FIIM:   RET
+,,,;********************************************************************************
+014E,FF 81 F6 F6,TAB_A,TAB_A:  DB      0FFh, 081h, 0F6h, 0F6h, 0F6h, 081h, 0FFh, 0
+0156,FF 80 B6 B6,TAB_B,TAB_B:  DB      0FFh, 080h, 0B6h, 0B6h, 0B6h, 0C9h, 0FFh, 0
+015E,FF C1 BE BE,TAB_C,TAB_C:  DB      0FFh, 0C1h, 0BEh, 0BEh, 0BEh, 0DDh, 0FFh, 0
+0166,FF 80 BE BE,TAB_D,TAB_D:  DB      0FFh, 080h, 0BEh, 0BEh, 0BEh, 0C1h, 0FFh, 0
+016E,FF 80 B6 B6,TAB_E,TAB_E:  DB      0FFh, 080h, 0B6h, 0B6h, 0B6h, 0BEh, 0FFh, 0
+0176,FF 80 B6 B6,TAB_F,TAB_F:  DB      0FFh, 080h, 0B6h, 0B6h, 0B6h, 0BEh, 0FFh, 0
+017E,FF C1 BE BE,TAB_G,TAB_G:  DB      0FFh, 0C1h, 0BEh, 0BEh, 0AEh, 0CDh, 0FFh, 0
+0186,FF 80 F7 F7,TAB_H,TAB_H:  DB      0FFh, 080h, 0F7h, 0F7h, 0F7h, 080h, 0FFh, 0
+018E,FF BE BE 80,TAB_I,TAB_I:  DB      0FFh, 0BEh, 0BEh, 080h, 0BEh, 0BEh, 0FFh, 0
+0196,FF BF BE BE,TAB_J,TAB_J:  DB      0FFh, 0BFh, 0BEh, 0BEh, 0BEh, 0C0h, 0FFh, 0
+019E,FF 80 F7 EB,TAB_K,TAB_K:  DB      0FFh, 080h, 0F7h, 0EBh, 0DDh, 0BEh, 0FFh, 0
+01A6,FF 80 BF BF,TAB_L,TAB_L:  DB      0FFh, 080h, 0BFh, 0BFh, 0BFh, 0BFh, 0FFh, 0
+01AE,FF 80 F9 F7,TAB_M,TAB_M:  DB      0FFh, 080h, 0F9h, 0F7h, 0F9h, 080h, 0FFh, 0
+01B6,FF 80 F9 F7,TAB_N,TAB_N:  DB      0FFh, 080h, 0F9h, 0F7h, 0CFh, 080h, 0FFh, 0
+01BE,FF C1 BE BE,TAB_O,TAB_O:  DB      0FFh, 0C1h, 0BEh, 0BEh, 0BEh, 0C1h, 0FFh, 0
+01C6,FF 80 F6 F6,TAB_P,TAB_P:  DB      0FFh, 080h, 0F6h, 0F6h, 0F6h, 0F9h, 0FFh, 0
+01CE,FF C1 BE BE,TAB_Q,TAB_Q:  DB      0FFh, 0C1h, 0BEh, 0BEh, 09Eh, 081h, 0FFh, 0
+01D6,FF 80 F6 F6,TAB_R,TAB_R:  DB      0FFh, 080h, 0F6h, 0F6h, 0F6h, 089h, 0FFh, 0
+01DE,FF D1 B6 B6,TAB_S,TAB_S:  DB      0FFh, 0D1h, 0B6h, 0B6h, 0B6h, 0CDh, 0FFh, 0
+01E6,FF FE FE 80,TAB_T,TAB_T:  DB      0FFh, 0FEh, 0FEh, 080h, 0FEh, 0FEh, 0FFh, 0
+01EE,FF C0 BF BF,TAB_U,TAB_U:  DB      0FFh, 0C0h, 0BFh, 0BFh, 0BFh, 0C0h, 0FFh, 0
+01F6,FF F0 CF BF,TAB_V,TAB_V:  DB      0FFh, 0F0h, 0CFh, 0BFh, 0CFh, 0F0h, 0FFh, 0
+01FE,FF E0 9F E7,TAB_W,TAB_W:  DB      0FFh, 0E0h, 09Fh, 0E7h, 09Fh, 0E0h, 0FFh, 0
+0206,FF 9C EB F7,TAB_X,TAB_X:  DB      0FFh, 09Ch, 0EBh, 0F7h, 0EBh, 09Ch, 0FFh, 0
+020E,FF F8 F7 8F,TAB_Y,TAB_Y:  DB      0FFh, 0F8h, 0F7h, 08Fh, 0F7h, 0F8h, 0FFh, 0
+0216,FF 9E AE B6,TAB_Z,TAB_Z:  DB      0FFh, 09Eh, 0AEh, 0B6h, 0BAh, 0BCh, 0FFh, 0
+,,,;********************************************************************************
+000E,,,        END

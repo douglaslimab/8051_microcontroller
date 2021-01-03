@@ -1,0 +1,13 @@
+0000,C2 90,INICIO,INICIO: CLR     P1.0
+0002,11 0A,,        ACALL   TEMPO
+0004,D2 90,,        SETB    P1.0
+0006,11 0A,,        ACALL   TEMPO
+0008,01 00,,        AJMP    INICIO
+,,,
+000A,78 FF,TEMPO,TEMPO:  MOV     R0,#0FFh
+000C,79 FF,VOLTA,VOLTA:  MOV     R1,#0FFH
+000E,D9 FE,,        DJNZ    R1,$
+0010,D8 FA,,        DJNZ    R0,VOLTA
+0012,22,,        RET
+,,,
+000E,,,        END
